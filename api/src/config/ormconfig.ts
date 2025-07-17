@@ -1,7 +1,7 @@
 import { DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 
-// Load .env file only for TypeORM CLI operations (migrations)
+// Carga .env solo para cli que no accede al contexto de variables de entorno de la app
 dotenv.config();
 
 export const config: DataSourceOptions = {
