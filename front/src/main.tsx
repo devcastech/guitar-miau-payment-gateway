@@ -1,11 +1,15 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot } from "react-dom/client";
+import { Provider as ReduxProvider } from "react-redux";
 import "@radix-ui/themes/styles.css";
 import "./index.css";
 import App from "./App.tsx";
+import store from './redux/store.ts';
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <ReduxProvider store={store}>
+      <App />
+    </ReduxProvider>
   </StrictMode>,
 );

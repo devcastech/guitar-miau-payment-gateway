@@ -1,5 +1,11 @@
 import { CreditCard, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
+import {  setCardInformation } from "../../../redux/states/cardInformation";
+import { useDispatch, useSelector } from "react-redux";
+import type { ICardInformation } from "../../../types/cardInformation";
+import { setDeliveryInformation } from "../../../redux/states/deliveryInformation";
+import type { IDeliveryInformation } from "../../../types/deliveryInformation";
+import type { IAppStore } from "../../../redux/store";
 
 const getCardType = (number: string) => {
   const cleaned = number.replace(/\s/g, "");
@@ -27,6 +33,14 @@ export const CardDeliveryInfo = ({
 }: {
   onFinished: () => void;
 }) => {
+  const dispatch = useDispatch();
+  const selectedDeliveryInformation = useSelector(
+    (state: IAppStore) => state.deliveryInformation,
+  );
+  const selectedCardInformation = useSelector(
+    (state: IAppStore) => state.cardInformation,
+  );
+  console.log("selectedDeliveryInformation", selectedDeliveryInformation);
   const {
     register,
     handleSubmit,
@@ -36,22 +50,32 @@ export const CardDeliveryInfo = ({
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-      cardNumber: "",
-      expiryDate: "",
-      cvv: "",
-      cardHolder: "",
-      fullName: "",
-      email: "",
-      address: "",
-      city: "",
+      ...selectedCardInformation,
+      ...selectedDeliveryInformation,
     },
   });
 
   const watchedCardNumber = watch("cardNumber");
   const cardType = getCardType(watchedCardNumber || "");
 
-  const onSubmit = (data: Record<string, string>) => {
+  const onSubmit = (data: ICardInformation & IDeliveryInformation) => {
     console.log("Datos listo para proceso de pago:", data);
+    dispatch(
+      setCardInformation({
+        cardNumber: data.cardNumber,
+        expiryDate: data.expiryDate,
+        cvv: data.cvv,
+        cardHolder: data.cardHolder,
+      }),
+    );
+    dispatch(
+      setDeliveryInformation({
+        fullName: data.fullName,
+        email: data.email,
+        address: data.address,
+        city: data.city,
+      }),
+    );
     onFinished?.();
   };
 

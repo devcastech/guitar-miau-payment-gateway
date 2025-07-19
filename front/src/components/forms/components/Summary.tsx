@@ -1,10 +1,14 @@
 import { CreditCard, Package, Truck, Receipt } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { IAppStore } from "../../../redux/store";
 export const Summary = ({ onFinished }: { onFinished: () => void }) => {
+  const selectedProduct = useSelector((state: IAppStore) => state.product);
+  console.log({ selectedProduct });
   const summaryData = {
-    productAmount: 1200000,
+    productAmount: parseFloat(selectedProduct.price),
     baseFee: 50000,
     deliveryFee: 60000,
-    productName: "Guitarra Acústica",
+    productName: selectedProduct.description,
     currency: "COP",
   };
 

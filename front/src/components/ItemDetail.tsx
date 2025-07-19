@@ -5,10 +5,10 @@ import { useState } from "react";
 
 export const ItemDetail = ({
   product,
-  setIsModalOpen,
+  onStartPayment,
 }: {
   product: Product;
-  setIsModalOpen: (isModalOpen: boolean) => void;
+  onStartPayment: (product: Product, quantity: number) => void;
 }) => {
   const [quantity, setQuantity] = useState(1);
 
@@ -134,7 +134,7 @@ export const ItemDetail = ({
 
           <div className="space-y-4">
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => onStartPayment(product, quantity)}
               className="w-full bg-gradient-to-r from-violet-600 to-purple-700 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-violet-700 hover:to-violet-800 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
             >
               <CreditCard size={24} />

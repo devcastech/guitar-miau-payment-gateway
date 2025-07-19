@@ -11,18 +11,8 @@ interface FinalStatusProps {
 export const FinalStatus = ({
   isSuccess = true,
   transactionId = "TXN-2025-001234",
-  amount = 1200000,
-  currency = "COP",
 }: FinalStatusProps) => {
   const navigate = useNavigate();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-ES", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
 
   const handleGoHome = () => {
     navigate("/");
@@ -67,12 +57,6 @@ export const FinalStatus = ({
               <div className="flex justify-between">
                 <span className="text-gray-600">ID de Transacción:</span>
                 <span className="font-mono text-gray-900">{transactionId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Monto Total:</span>
-                <span className="font-semibold text-green-600">
-                  {formatCurrency(amount)}
-                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Fecha:</span>

@@ -47,8 +47,6 @@ const PaymentFlow = () => {
           <FinalStatus
             isSuccess={paymentSuccess}
             transactionId="TXN-2025-001234"
-            amount={1200000}
-            currency="COP"
           />
         </div>
       )}
