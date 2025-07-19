@@ -1,0 +1,59 @@
+import { useState } from "react";
+import { CardDeliveryInfo } from "./components/CardDeliveryInfo";
+import { Button } from "@radix-ui/themes";
+import { Summary } from "./components/Summary";
+import { FinalStatus } from "./components/FinalStatus";
+
+const paymentSteps = {
+  STEP_1: {
+    id: 1,
+    value: "cardAndDeliveryInformation",
+  },
+  STEP_2: {
+    id: 2,
+    value: "summary",
+  },
+  STEP_3: {
+    id: 3,
+    value: "finalStatus",
+  },
+};
+
+const PaymentFlow = () => {
+  const [paymentStep, setPaymentStep] = useState(paymentSteps.STEP_1);
+  const [paymentSuccess, setPaymentSuccess] = useState(true); // keep while payment process is implmented
+
+  return (
+    <article className="w-full">
+      {paymentStep.id === paymentSteps.STEP_1.id && (
+        <div className="w-full">
+          <CardDeliveryInfo
+            onFinished={() => setPaymentStep(paymentSteps.STEP_2)}
+          />
+        </div>
+      )}
+      {paymentStep.id === paymentSteps.STEP_2.id && (
+        <div className="w-full">
+          <Summary onFinished={() => setPaymentStep(paymentSteps.STEP_3)} />
+          <div className="w-full flex justify-start items-center mt-4">
+            <Button onClick={() => setPaymentStep(paymentSteps.STEP_1)}>
+              Atrás
+            </Button>
+          </div>
+        </div>
+      )}
+      {paymentStep.id === paymentSteps.STEP_3.id && (
+        <div className="w-full">
+          <FinalStatus
+            isSuccess={paymentSuccess}
+            transactionId="TXN-2025-001234"
+            amount={1200000}
+            currency="COP"
+          />
+        </div>
+      )}
+    </article>
+  );
+};
+
+export default PaymentFlow;

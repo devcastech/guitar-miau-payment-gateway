@@ -16,8 +16,8 @@ export const Header = () => {
   return (
     <header className="w-full bg-white shadow-sm sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0">
+        <div className="flex justify-between items-center">
+          <div className="flex justify-center items-center">
             <NavLink to="/" onClick={closeMenu}>
               <img
                 src="/guitar-logo.png"
@@ -25,7 +25,7 @@ export const Header = () => {
                 className="h-16 md:h-20 w-auto"
               />
             </NavLink>
-            <h1>Guitar Miau</h1>
+            <h1 className="font-bold">Guitar Miau</h1>
           </div>
 
           <div className="hidden md:block">
@@ -57,7 +57,6 @@ export const Header = () => {
             </ul>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={toggleMenu}

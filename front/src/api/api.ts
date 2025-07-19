@@ -1,6 +1,6 @@
 import axios from "axios"
 import { API_URL } from "../utils/constants"
-import { type ProductsResponse, type Product, type ProductResponse } from "../types/product";
+import { type ProductsResponse, type ProductResponse } from "../types/product";
 
 export const getProducts = async (): Promise<ProductsResponse | null> => {
   try {
