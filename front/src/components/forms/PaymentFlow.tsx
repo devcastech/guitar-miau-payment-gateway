@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CardDeliveryInfo } from "./components/CardDeliveryInfo";
 import { Button } from "@radix-ui/themes";
 import { Summary } from "./components/Summary";
 import { FinalStatus } from "./components/FinalStatus";
+import { useParams } from "react-router";
 
 const paymentSteps = {
   STEP_1: {
@@ -21,7 +22,22 @@ const paymentSteps = {
 
 const PaymentFlow = () => {
   const [paymentStep, setPaymentStep] = useState(paymentSteps.STEP_1);
-  const [paymentSuccess, setPaymentSuccess] = useState(true); // keep while payment process is implmented
+
+  const { id } = useParams();
+  const base_url = window.location.origin;
+  const redirectUrl = `${base_url}/product/${id}`;
+
+  const urlParams = new URLSearchParams(location.search);
+  const transactionId = urlParams.get("id") || "";
+  const isSuccess = !!transactionId;
+  useEffect(() => {
+    if (transactionId && isSuccess) {
+      // TODO: check transaction status from api
+      console.log("Transaction ID:", transactionId);
+      console.log("Success:", isSuccess);
+      setPaymentStep(paymentSteps.STEP_3);
+    }
+  }, [transactionId, isSuccess]);
 
   return (
     <article className="w-full">
@@ -34,7 +50,7 @@ const PaymentFlow = () => {
       )}
       {paymentStep.id === paymentSteps.STEP_2.id && (
         <div className="w-full">
-          <Summary onFinished={() => setPaymentStep(paymentSteps.STEP_3)} />
+          <Summary redirectUrl={redirectUrl} />
           <div className="w-full flex justify-start items-center mt-4">
             <Button onClick={() => setPaymentStep(paymentSteps.STEP_1)}>
               Atrás
@@ -44,10 +60,7 @@ const PaymentFlow = () => {
       )}
       {paymentStep.id === paymentSteps.STEP_3.id && (
         <div className="w-full">
-          <FinalStatus
-            isSuccess={paymentSuccess}
-            transactionId="TXN-2025-001234"
-          />
+          <FinalStatus isSuccess={isSuccess} transactionId={transactionId} />
         </div>
       )}
     </article>

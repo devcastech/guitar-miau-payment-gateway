@@ -1,9 +1,14 @@
 import { CreditCard, Package, Truck, Receipt } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { IAppStore } from "../../../redux/store";
-export const Summary = ({ onFinished }: { onFinished: () => void }) => {
+import { useState, useMemo } from "react";
+import { WompiWidget } from "./WompiWidget";
+
+export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
   const selectedProduct = useSelector((state: IAppStore) => state.product);
-  console.log({ selectedProduct });
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [integrity, setIntegrity] = useState<string | null>(null);
+
   const summaryData = {
     productAmount: parseFloat(selectedProduct.price),
     baseFee: 50000,
@@ -22,10 +27,29 @@ export const Summary = ({ onFinished }: { onFinished: () => void }) => {
       minimumFractionDigits: 2,
     }).format(amount);
   };
+  const REFERENCE = useMemo(() => {
+    const timestamp = Date.now();
+    return `REF_${timestamp}`;
+  }, []);
 
-  const handlePayment = () => {
-    console.log("Procesando pago...", { total, ...summaryData });
-    onFinished();
+  const AMOUNT_IN_CENTS = Math.round(total * 100);
+
+  const CURRENCY = "COP";
+  const INTEGRITY_SECRET =
+    "stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp";
+  const BASE_STRING = `${REFERENCE}${AMOUNT_IN_CENTS}${CURRENCY}${INTEGRITY_SECRET}`;
+
+  const handlePayment = async () => {
+    const encondedText = new TextEncoder().encode(BASE_STRING);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", encondedText);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    console.log("Generated signature:", hashHex);
+    setIntegrity(hashHex);
+    setIsProcessing(true);
   };
 
   return (
@@ -106,6 +130,25 @@ export const Summary = ({ onFinished }: { onFinished: () => void }) => {
           <CreditCard className="w-5 h-5" />
           Confirmar Pago
         </button>
+
+        {/* {isProcessing && integrity && (
+          <WompiWeb
+            reference={REFERENCE}
+            currency={CURRENCY}
+            amountInCents={AMOUNT_IN_CENTS}
+            integry={integrity}
+            redirectUrl={redirectUrl}
+          />
+        )} */}
+        {isProcessing && integrity && (
+          <WompiWidget
+            reference={REFERENCE}
+            currency={CURRENCY}
+            amountInCents={AMOUNT_IN_CENTS}
+            integry={integrity}
+            redirectUrl={redirectUrl}
+          />
+        )}
 
         <div className="text-center text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
           <p>🔒 Pago seguro y encriptado</p>

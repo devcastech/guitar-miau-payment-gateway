@@ -1,21 +1,17 @@
 import { CheckCircle, XCircle, Home, Receipt } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 interface FinalStatusProps {
   isSuccess?: boolean;
-  transactionId?: string;
-  amount?: number;
-  currency?: string;
+  transactionId: string;
 }
 
-export const FinalStatus = ({
-  isSuccess = true,
-  transactionId = "TXN-2025-001234",
-}: FinalStatusProps) => {
+export const FinalStatus = ({ isSuccess = true, transactionId }: FinalStatusProps) => {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleGoHome = () => {
-    navigate("/");
+    navigate(`/product/${id}`);
   };
 
   return (
