@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,6 +15,7 @@ export class Product {
   @Column()
   name: string;
 
+  @ApiProperty({ description: 'Product description', required: false })
   @Column('text', { nullable: true })
   description: string;
 
