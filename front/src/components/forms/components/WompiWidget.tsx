@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { PAYMENT_PUBLIC_KEY } from "../../../utils/constants";
 
 export const WompiWidget = ({
   reference,
@@ -27,10 +28,9 @@ export const WompiWidget = ({
     const script = document.createElement("script");
     script.src = "https://checkout.co.uat.wompi.dev/widget.js";
     script.setAttribute("data-render", "button");
-    // TODO: GET FROM .ENV
     script.setAttribute(
       "data-public-key",
-      "pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7",
+      PAYMENT_PUBLIC_KEY
     );
     script.setAttribute("data-currency", currency);
     script.setAttribute("data-amount-in-cents", `${amountInCents}`);

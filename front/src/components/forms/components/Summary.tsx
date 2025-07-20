@@ -1,14 +1,12 @@
 import { CreditCard, Package, Truck, Receipt } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { IAppStore } from "../../../redux/store";
 import { useState, useMemo } from "react";
 import { WompiWidget } from "./WompiWidget";
-import { WompiWeb } from "./WompiWeb";
-import { setPaymentModal } from "../../../redux/states/app";
-import { PAYMENT_STEPS } from "../../../utils/constants";
+import { PAYMENT_INTEGRITY_KEY } from "../../../utils/constants";
+// import { WompiWeb } from "./WompiWeb";
 
 export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
-  const dispatch = useDispatch();
   const selectedProduct = useSelector((state: IAppStore) => state.product);
   const [isProcessing, setIsProcessing] = useState(false);
   const [integrity, setIntegrity] = useState<string | null>(null);
@@ -33,17 +31,15 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
   };
   const REFERENCE = useMemo(() => {
     const timestamp = Date.now();
-    return `REF_${timestamp}`;
+    return `REF_GM_${timestamp}`;
   }, []);
-
   const AMOUNT_IN_CENTS = Math.round(total * 100);
-
-  const CURRENCY = "COP";
-  const INTEGRITY_SECRET =
-    "stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp";
+  const CURRENCY = summaryData.currency;
+  const INTEGRITY_SECRET = PAYMENT_INTEGRITY_KEY;
   const BASE_STRING = `${REFERENCE}${AMOUNT_IN_CENTS}${CURRENCY}${INTEGRITY_SECRET}`;
 
   const handlePayment = async () => {
+    // TODO: DO THIS IN BACKEND!
     const encondedText = new TextEncoder().encode(BASE_STRING);
     const hashBuffer = await crypto.subtle.digest("SHA-256", encondedText);
     const hashArray = Array.from(new Uint8Array(hashBuffer));

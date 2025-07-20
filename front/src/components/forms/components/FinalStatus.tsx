@@ -1,6 +1,6 @@
 import { CheckCircle, XCircle, Home, Receipt } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { setPaymentModal } from "../../../redux/states/app";
 import { PAYMENT_STEPS } from "../../../utils/constants";
 

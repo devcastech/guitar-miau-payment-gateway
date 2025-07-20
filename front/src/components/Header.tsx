@@ -35,7 +35,7 @@ export const Header = () => {
                   className="flex items-center gap-2 text-gray-700 hover:gray-800 font-medium transition-colors hover:underline duration-200"
                   to="/"
                 >
-                  Home
+                  Guitarras
                 </NavLink>
               </li>
               <li>
@@ -44,14 +44,6 @@ export const Header = () => {
                   to="/about"
                 >
                   About
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className="flex items-center gap-2 text-gray-700 hover:gray-800 font-medium transition-colors hover:underline duration-200"
-                  to="/contact"
-                >
-                  Contact
                 </NavLink>
               </li>
             </ul>
@@ -83,23 +75,23 @@ export const Header = () => {
                 className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:text-slate-800 hover:bg-gray-50 font-medium transition-colors duration-200"
               >
                 <Home size={20} />
-                Home
+                Inicio
+              </NavLink>
+              <NavLink
+                to="/"
+                onClick={closeMenu}
+                className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:text-slate-800 hover:bg-gray-50 font-medium transition-colors duration-200"
+              >
+                <Info size={20} />
+                Guitarras
               </NavLink>
               <NavLink
                 to="/about"
                 onClick={closeMenu}
                 className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:text-slate-800 hover:bg-gray-50 font-medium transition-colors duration-200"
               >
-                <Info size={20} />
-                About
-              </NavLink>
-              <NavLink
-                to="/contact"
-                onClick={closeMenu}
-                className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:text-slate-800 hover:bg-gray-50 font-medium transition-colors duration-200"
-              >
                 <Phone size={20} />
-                Contact
+                About
               </NavLink>
             </div>
           </div>

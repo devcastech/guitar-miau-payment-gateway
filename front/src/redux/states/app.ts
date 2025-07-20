@@ -8,9 +8,26 @@ export const defaultApp = {
     step: PAYMENT_STEPS.STEP_2.id,
   },
 };
+
+const getInitialState = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const transactionId = urlParams.get("id");
+
+  if (transactionId) {
+    return {
+      paymentModal: {
+        open: true,
+        step: PAYMENT_STEPS.STEP_3.id,
+      },
+    };
+  }
+
+  return getLocalStorage("app") ? getLocalStorage("app") : defaultApp;
+};
+
 export const appSlice = createSlice({
   name: "app",
-  initialState: getLocalStorage("app") ? getLocalStorage("app") : defaultApp,
+  initialState: getInitialState(),
   reducers: {
     setPaymentModal: (state, action) => {
       setLocalStorage("app", { ...state, paymentModal: action.payload });

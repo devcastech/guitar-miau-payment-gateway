@@ -7,9 +7,8 @@ import type { Product as ProductType } from "../../types/product";
 import { useDispatch, useSelector } from "react-redux";
 import { setProduct } from "../../redux/states/product";
 import { setPaymentModal } from "../../redux/states/app";
-import { PAYMENT_STEPS } from "../../utils/constants";
 import type { IAppStore } from "../../redux/store";
-import { useEffect } from "react";
+
 import PaymentFlow from "../../components/forms/PaymentFlow";
 
 export const Product = () => {
@@ -39,23 +38,7 @@ export const Product = () => {
     );
   };
 
-  const urlParams = new URLSearchParams(location.search);
-  const transactionId = urlParams.get("id") || "";
-  const isSuccess = !!transactionId;
-  useEffect(() => {
-    console.log("transactionId", transactionId);
-    if (transactionId && isSuccess) {
-      // TODO: check transaction status from api
-      console.log("Transaction ID:", transactionId);
-      console.log("Success:", isSuccess);
-      dispatch(
-        setPaymentModal({
-          open: true,
-          step: PAYMENT_STEPS.STEP_3.id,
-        }),
-      );
-    }
-  }, [transactionId, isSuccess, dispatch]);
+
   return (
     <div className="w-full">
       {isLoading && <p>Loading...</p>}
