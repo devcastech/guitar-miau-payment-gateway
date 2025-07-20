@@ -25,4 +25,8 @@ export class CreateTransactionDto {
     message: 'Cada ID de producto debe ser un UUID válido',
   })
   products: string[];
+
+  @IsString()
+  @IsUUID('4', { message: 'El ID de cliente debe ser un UUID válido' })
+  customer: string;
 }

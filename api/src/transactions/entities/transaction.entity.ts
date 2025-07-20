@@ -2,12 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
+import { Customer } from '../../customers/entities/customer.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('transactions')
@@ -37,6 +40,14 @@ export class Transaction {
   })
   @Column('numeric', { precision: 12, scale: 2, default: 0 })
   totalAmount: number;
+
+  @ApiProperty({
+    description: 'Customer who made the transaction',
+    type: () => Customer,
+  })
+  @ManyToOne(() => Customer, { eager: true })
+  @JoinColumn({ name: 'customer_id' })
+  customer: Customer;
 
   @ApiProperty({
     description: 'Products of the transaction',
