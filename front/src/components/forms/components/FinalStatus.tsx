@@ -45,11 +45,11 @@ export const FinalStatus = ({
 
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-gray-900">
-            {isSuccess ? "¡Todo salió Bien!" : "Pago Fallido"}
+            {isSuccess ? "¡Ya casi!" : "Pago Fallido"}
           </h2>
           <p className="text-gray-600">
             {isSuccess
-              ? "Tu transacción ha sido procesada y se encuentra en estado de validación"
+              ? "Tu transacción está siendo procesada y se encuentra en estado de validación"
               : "Hubo un problema al procesar tu pago"}
           </p>
         </div>

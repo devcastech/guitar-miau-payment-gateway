@@ -10,6 +10,7 @@ import { setPaymentModal } from "../../redux/states/app";
 import { PAYMENT_STEPS } from "../../utils/constants";
 import type { IAppStore } from "../../redux/store";
 import { useEffect } from "react";
+import PaymentFlow from "../../components/forms/PaymentFlow";
 
 export const Product = () => {
   const { id } = useParams();
@@ -72,7 +73,9 @@ export const Product = () => {
               }),
             );
           }}
-        />
+        >
+          <PaymentFlow />
+        </Modal>
       )}
     </div>
   );

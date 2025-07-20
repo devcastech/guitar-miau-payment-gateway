@@ -27,7 +27,12 @@ export const WompiWeb = ({
         <input type="hidden" name="signature:integrity" value={integry} />
 
         <input type="hidden" name="redirect-url" value={redirectUrl} />
-        <button type="submit">Pagar con Wompi</button>
+        <button
+          type="submit"
+          className="w-full bg-[#b0f2ae] text-slate-700 font-semibold py-4 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        >
+          Pagar con Wompi
+        </button>
       </form>
     </>
   );

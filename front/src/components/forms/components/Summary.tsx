@@ -1,10 +1,14 @@
 import { CreditCard, Package, Truck, Receipt } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { IAppStore } from "../../../redux/store";
 import { useState, useMemo } from "react";
 import { WompiWidget } from "./WompiWidget";
+import { WompiWeb } from "./WompiWeb";
+import { setPaymentModal } from "../../../redux/states/app";
+import { PAYMENT_STEPS } from "../../../utils/constants";
 
 export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
+  const dispatch = useDispatch();
   const selectedProduct = useSelector((state: IAppStore) => state.product);
   const [isProcessing, setIsProcessing] = useState(false);
   const [integrity, setIntegrity] = useState<string | null>(null);

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { CardDeliveryInfo } from "./components/CardDeliveryInfo";
 import { Button } from "@radix-ui/themes";
 import { Summary } from "./components/Summary";
@@ -27,14 +26,13 @@ const PaymentFlow = () => {
       {paymentStep.step === PAYMENT_STEPS.STEP_1.id && (
         <div className="w-full">
           <CardDeliveryInfo
-            onFinished={
-              () =>
-                dispatch(
-                  setPaymentModal({
-                    open: true,
-                    step: PAYMENT_STEPS.STEP_2.id,
-                  }),
-                )
+            onFinished={() =>
+              dispatch(
+                setPaymentModal({
+                  open: true,
+                  step: PAYMENT_STEPS.STEP_2.id,
+                }),
+              )
             }
           />
         </div>
@@ -60,7 +58,11 @@ const PaymentFlow = () => {
       )}
       {paymentStep.step === PAYMENT_STEPS.STEP_3.id && (
         <div className="w-full">
-          <FinalStatus isSuccess={isSuccess} transactionId={transactionId} redirectPath={redirectPath} />
+          <FinalStatus
+            isSuccess={isSuccess}
+            transactionId={transactionId}
+            redirectPath={redirectPath}
+          />
         </div>
       )}
     </article>
