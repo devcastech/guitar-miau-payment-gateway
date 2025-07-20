@@ -10,7 +10,7 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
   const [integrity, setIntegrity] = useState<string | null>(null);
 
   const summaryData = {
-    productAmount: parseFloat(selectedProduct.price),
+    productAmount: parseFloat(selectedProduct.price) * selectedProduct.quantity,
     baseFee: 50000,
     deliveryFee: 60000,
     productName: selectedProduct.description,
@@ -71,7 +71,13 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
             <span className="font-medium text-gray-900">Producto</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-700">{summaryData.productName}</span>
+            <div>
+              <span className="text-gray-700">{summaryData.productName}</span>
+              <div className="text-sm text-gray-500">
+                {formatCurrency(parseFloat(selectedProduct.price))} ×{" "}
+                {selectedProduct.quantity}
+              </div>
+            </div>
             <span className="font-semibold text-gray-900">
               {formatCurrency(summaryData.productAmount)}
             </span>
