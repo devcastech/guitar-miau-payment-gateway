@@ -1,39 +1,61 @@
-# PAYMENT GATEWAY API
+# 🎸 Guitar Miau - API
 
-## Project setup
+API RESTful para la gestión de pagos de la tienda de guitarras Guitar Miau.
 
-```bash
-$ npm install
-```
+## 🚀 Tecnologías
 
-## Compile and run the project
+- NestJS
+- TypeScript
+- TypeORM
+- PostgreSQL
+- Swagger para documentación
 
-```bash
-# development
-$ npm run start
+## 🛠️ Configuración
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
+### Instalación
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Run database locally
+3. Configura las variables de entorno (ver `.env.example`)
+
+## 🚦 Iniciar la Aplicación
 
 ```bash
-docker compose -f docker-compose.yaml up -d
+# Modo desarrollo
+npm run start:dev
 ```
+
+La API estará disponible en [http://localhost:3000](http://localhost:3000)
+
+## 📊 Base de Datos
+
+### Usando Docker (recomendado)
+
+```bash
+docker compose up -d
+```
+
+### Seed de datos de prueba
+
+```bash
+npm run seed
+```
+
+## 🧪 Pruebas
+
+```bash
+# Ejecutar pruebas unitarias
+npm test
+
+# Generar reporte de cobertura
+npm run test:cov
+```
+
+## 📚 Documentación API
+
+Con el servidor en ejecución, accede a la documentación interactiva:
+
+- Swagger UI: [http://localhost:3000/miau/docs#/](http://localhost:3000/miau/docs#/) 
