@@ -1,20 +1,27 @@
+# Build stage
 FROM node:18-alpine AS builder
 
-WORKDIR /app/api
+WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
 
-RUN npm install
+# Install dependencies
+RUN npm ci
 
+# Copy source code
 COPY . .
 
+# Build the application
 RUN npm run build
 
+# Production stage
 FROM node:18-alpine
 
-WORKDIR /app/api
+WORKDIR /app
 
+# Install system dependencies
 RUN apk update && apk add --no-cache \
     bash \
     curl \
@@ -23,21 +30,30 @@ RUN apk update && apk add --no-cache \
     net-tools \
     && rm -rf /var/cache/apk/*
 
+# Copy package files
 COPY package*.json ./
 
-RUN npm install --only=production
-RUN npm install -g ts-node typescript tsconfig-paths @types/node
+# Install production dependencies
+RUN npm ci --only=production
 
-COPY --from=builder /app/api/dist ./dist
-COPY --from=builder /app/api/package*.json ./
-COPY --from=builder /app/api/start.sh ./
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/start.sh ./
 
+# Create necessary directories
 RUN mkdir -p dist/seeds
 
-ENV NODE_ENV=development
+# Environment variables
+ENV NODE_ENV=production
 ENV PORT=3000
 
-
+# Make start script executable
 RUN chmod +x ./start.sh
 
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the application
+# Start the application using the start script
+#
 CMD ["./start.sh"]
