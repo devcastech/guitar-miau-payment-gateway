@@ -42,10 +42,14 @@ export const FinalStatus = ({
     navigate(redirectPath);
   };
   useEffect(() => {
-    if ((transactionIsPending || transactionIsRejected) && retryCount < 5) {
-      refetch();
-      setRetryCount((prev) => prev + 1);
+    async function retry() {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if ((transactionIsPending || transactionIsRejected) && retryCount < 5) {
+        refetch();
+        setRetryCount((prev) => prev + 1);
+      }
     }
+    retry();
   }, [transactionIsPending, transactionIsRejected, refetch, retryCount]);
 
   return (
