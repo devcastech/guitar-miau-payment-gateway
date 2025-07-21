@@ -5,8 +5,8 @@ Aplicación web para la venta de guitarras con integración de pasarela de pago 
 ## 🌐 Enlaces de Producción
 
 - **FRONTEND**: [https://d1iw1r2yizv6bb.cloudfront.net/](https://d1iw1r2yizv6bb.cloudfront.net/)
-- **API**: [https://wtzcxp6wac.us-east-1.awsapprunner.com](https://wtzcxp6wac.us-east-1.awsapprunner.com)
-- **DOCUMENTACIÓN API**: [Swagger UI](https://wtzcxp6wac.us-east-1.awsapprunner.com/miau/docs#/)
+- **API**: [https://ppeqi4smpj.us-east-1.awsapprunner.com](https://ppeqi4smpj.us-east-1.awsapprunner.com)
+- **DOCUMENTACIÓN API**: [Swagger UI](https://ppeqi4smpj.us-east-1.awsapprunner.com/miau/docs#/)
 
 
 ## 🚀 Características

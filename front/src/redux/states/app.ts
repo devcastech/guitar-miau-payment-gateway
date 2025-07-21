@@ -5,7 +5,7 @@ import { PAYMENT_STEPS } from "../../utils/constants";
 export const defaultApp = {
   paymentModal: {
     open: false,
-    step: PAYMENT_STEPS.STEP_2.id,
+    step: PAYMENT_STEPS.STEP_1.id,
   },
 };
 
