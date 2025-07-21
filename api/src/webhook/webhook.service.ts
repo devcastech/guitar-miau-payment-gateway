@@ -27,6 +27,7 @@ export class WebhookService {
     const { data } = createWebhookDto;
     const { transaction } = data;
     const { id: transactionId, reference, status } = transaction;
+    console.log('params', { transactionId, reference, status });
 
     const existingTransaction = await this.transactionRepository.findOne({
       where: [{ externalId: transactionId }, { reference: reference }],
@@ -36,6 +37,7 @@ export class WebhookService {
         'transactionProducts.product',
       ],
     });
+    console.log('existingTransaction', existingTransaction);
 
     if (!existingTransaction) {
       throw new NotFoundException(
@@ -65,8 +67,8 @@ export class WebhookService {
         }
       }
 
-      // Update transaction status
       existingTransaction.status = 'completed';
+      existingTransaction.externalId = transactionId;
       await this.transactionRepository.save(existingTransaction);
 
       try {
@@ -76,6 +78,11 @@ export class WebhookService {
       } catch (error) {
         console.error('Error creating delivery:', error);
       }
+    }
+    if (!isApproved && existingTransaction.status !== 'rejected') {
+      existingTransaction.status = 'rejected';
+      existingTransaction.externalId = transactionId;
+      await this.transactionRepository.save(existingTransaction);
     }
 
     return {

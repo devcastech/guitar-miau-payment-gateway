@@ -10,34 +10,35 @@ import { setPaymentModal } from "../../redux/states/app";
 import type { IAppStore } from "../../redux/store";
 
 import PaymentFlow from "../../components/forms/PaymentFlow";
+import { useEffect } from "react";
 
 export const Product = () => {
   const { id } = useParams();
   const { paymentModal } = useSelector((state: IAppStore) => state.app);
   const dispatch = useDispatch();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["product", id],
     queryFn: () => getProduct(id!),
     enabled: !!id,
   });
 
   const startPaymentProcess = (product: ProductType, quantity: number) => {
-    console.log("selected product", product);
-    console.log("quantity", quantity);
     dispatch(
       setProduct({
         ...product,
         quantity: quantity,
-      }),
+      })
     );
     dispatch(
       setPaymentModal({
         open: true,
         step: paymentModal.step,
-      }),
+      })
     );
   };
-
+  useEffect(() => {
+    refetch();
+  }, [paymentModal, refetch]);
 
   return (
     <div className="w-full">
@@ -53,7 +54,7 @@ export const Product = () => {
               setPaymentModal({
                 open: false,
                 step: paymentModal.step,
-              }),
+              })
             );
           }}
         >

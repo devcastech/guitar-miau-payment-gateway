@@ -13,7 +13,7 @@ export const config: DataSourceOptions = {
   database: process.env.DB_NAME || 'paymentgateway',
   synchronize: true,
   migrationsRun: true,
-  logging: true,
+  logging: false,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
 };

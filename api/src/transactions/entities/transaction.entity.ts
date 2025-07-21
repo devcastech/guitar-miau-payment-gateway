@@ -23,6 +23,7 @@ export class Transaction {
   })
   @Column({
     name: 'external_id',
+    nullable: true,
   })
   externalId: string;
 

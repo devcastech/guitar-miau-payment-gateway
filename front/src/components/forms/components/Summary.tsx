@@ -1,57 +1,29 @@
 import { CreditCard, Package, Truck, Receipt } from "lucide-react";
-import { useSelector } from "react-redux";
-import type { IAppStore } from "../../../redux/store";
-import { useState, useMemo } from "react";
-import { WompiWidget } from "./WompiWidget";
-import { PAYMENT_INTEGRITY_KEY } from "../../../utils/constants";
+import type { Product } from "../../../types/product";
+import { formatCurrency } from "../../../utils";
+// import { WompiWidget } from "./WompiWidget";
 // import { WompiWeb } from "./WompiWeb";
 
-export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
-  const selectedProduct = useSelector((state: IAppStore) => state.product);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [integrity, setIntegrity] = useState<string | null>(null);
-
-  const summaryData = {
-    productAmount: parseFloat(selectedProduct.price) * selectedProduct.quantity,
-    baseFee: 50000,
-    deliveryFee: 60000,
-    productName: selectedProduct.description,
-    currency: "COP",
+export const Summary = ({
+  summaryData,
+  total,
+  product,
+  currency,
+  startPayment,
+}: {
+  summaryData: {
+    productAmount: number;
+    baseFee: number;
+    deliveryFee: number;
+    productName: string;
+    currency: string;
   };
-
-  const total =
-    summaryData.productAmount + summaryData.baseFee + summaryData.deliveryFee;
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: summaryData.currency,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-  const REFERENCE = useMemo(() => {
-    const timestamp = Date.now();
-    return `REF_GM_${timestamp}`;
-  }, []);
-  const AMOUNT_IN_CENTS = Math.round(total * 100);
-  const CURRENCY = summaryData.currency;
-  const INTEGRITY_SECRET = PAYMENT_INTEGRITY_KEY;
-  const BASE_STRING = `${REFERENCE}${AMOUNT_IN_CENTS}${CURRENCY}${INTEGRITY_SECRET}`;
-
-  const handlePayment = async () => {
-    // TODO: DO THIS IN BACKEND!
-    const encondedText = new TextEncoder().encode(BASE_STRING);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", encondedText);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    console.log("Generated signature:", hashHex);
-    setIntegrity(hashHex);
-    setIsProcessing(true);
-  };
-
+  currency: string;
+  integrity?: string;
+  total: number;
+  product: Product & { quantity: number };
+  startPayment: () => void;
+}) => {
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg">
       <div className="space-y-6">
@@ -72,14 +44,14 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
           </div>
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-gray-700">{summaryData.productName}</span>
+              <span className="text-gray-700">{product.name}</span>
               <div className="text-sm text-gray-500">
-                {formatCurrency(parseFloat(selectedProduct.price))} ×{" "}
-                {selectedProduct.quantity}
+                {formatCurrency(parseFloat(product.price), currency)} ×{" "}
+                {product.quantity}
               </div>
             </div>
             <span className="font-semibold text-gray-900">
-              {formatCurrency(summaryData.productAmount)}
+              {formatCurrency(summaryData.productAmount, currency)}
             </span>
           </div>
         </div>
@@ -129,24 +101,16 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
           </div>
         </div>
 
-        <button
-          onClick={handlePayment}
-          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-4 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-        >
-          <CreditCard className="w-5 h-5" />
-          Confirmar Pago
-        </button>
-
-        {/* {isProcessing && integrity && (
+        {/* {integrity && (
           <WompiWeb
-            reference={REFERENCE}
-            currency={CURRENCY}
-            amountInCents={AMOUNT_IN_CENTS}
+            reference={reference}
+            currency={currency}
+            amountInCents={amountInCents}
             integry={integrity}
             redirectUrl={redirectUrl}
           />
         )} */}
-        {isProcessing && integrity && (
+        {/* {isProcessing && integrity && (
           <WompiWidget
             reference={REFERENCE}
             currency={CURRENCY}
@@ -154,7 +118,14 @@ export const Summary = ({ redirectUrl }: { redirectUrl: string }) => {
             integry={integrity}
             redirectUrl={redirectUrl}
           />
-        )}
+        )} */}
+
+        <button
+          onClick={startPayment}
+          className="w-full bg-[#b0f2ae] text-slate-700 font-semibold py-4 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        >
+          Pagar con Wompi
+        </button>
 
         <div className="text-center text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
           <p>🔒 Pago seguro y encriptado</p>

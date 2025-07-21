@@ -8,6 +8,7 @@ import {
   IsUUID,
   Min,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 
 export class TransactionProductDto {
@@ -34,6 +35,7 @@ export class CreateTransactionDto {
     example: 'txn_1234567890',
   })
   @IsString()
+  @IsOptional()
   externalId: string;
 
   @ApiProperty({

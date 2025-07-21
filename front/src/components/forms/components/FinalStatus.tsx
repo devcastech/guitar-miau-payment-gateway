@@ -3,30 +3,50 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { setPaymentModal } from "../../../redux/states/app";
 import { PAYMENT_STEPS } from "../../../utils/constants";
+import { useQuery } from "@tanstack/react-query";
+import { getTransaction } from "../../../api/api";
+import { useEffect, useState } from "react";
 
 interface FinalStatusProps {
   isSuccess?: boolean;
   transactionId: string;
   redirectPath: string;
+  reference: string;
 }
 
 export const FinalStatus = ({
   isSuccess = true,
   transactionId,
   redirectPath,
+  reference,
 }: FinalStatusProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [retryCount, setRetryCount] = useState(0);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["transactions", reference],
+    queryFn: () => getTransaction(reference),
+    enabled: !!reference,
+  });
+  const transactionIsPending = data?.status === "pending";
+  const transactionIsCompleted = data?.status === "completed";
+  const transactionIsRejected = data?.status === "rejected";
 
   const handleGoBack = () => {
     dispatch(
       setPaymentModal({
         open: false,
         step: PAYMENT_STEPS.STEP_1.id,
-      }),
+      })
     );
     navigate(redirectPath);
   };
+  useEffect(() => {
+    if ((transactionIsPending || transactionIsRejected) && retryCount < 5) {
+      refetch();
+      setRetryCount((prev) => prev + 1);
+    }
+  }, [transactionIsPending, transactionIsRejected, refetch, retryCount]);
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded-xl">
@@ -44,14 +64,28 @@ export const FinalStatus = ({
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {isSuccess ? "¡Ya casi!" : "Pago Fallido"}
-          </h2>
-          <p className="text-gray-600">
-            {isSuccess
-              ? "Tu transacción está siendo procesada y se encuentra en estado de validación"
-              : "Hubo un problema al procesar tu pago"}
-          </p>
+          {!transactionIsCompleted && !transactionIsRejected && (
+            <h2 className="text-2xl font-bold text-gray-900">
+              {isSuccess ? "¡Ya casi!" : "Pago Fallido"}
+            </h2>
+          )}
+          {transactionIsRejected && (
+            <h2 className="text-2xl font-bold text-gray-900">
+              Tu transacción ha sido rechazada.
+            </h2>
+          )}
+          {transactionIsCompleted && (
+            <h2 className="text-2xl font-bold text-gray-900">
+              Tu transacción ha sido completada exitosamente.
+            </h2>
+          )}
+          {!transactionIsCompleted && (
+            <p className="text-gray-600">
+              {isSuccess && transactionIsPending
+                ? "Tu transacción está siendo procesada y se encuentra en estado de validación"
+                : "Hubo un problema al procesar tu pago"}
+            </p>
+          )}
         </div>
 
         {isSuccess && (
@@ -81,6 +115,11 @@ export const FinalStatus = ({
                 </span>
               </div>
             </div>
+          </div>
+        )}
+        {isLoading && (
+          <div className="w-full flex justify-center items-center p-4 animate-pulse">
+            <p className="text-slate-300">Actualizando...</p>
           </div>
         )}
 

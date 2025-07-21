@@ -59,14 +59,13 @@ export const CardDeliveryInfo = ({
   const cardType = getCardType(watchedCardNumber || "");
 
   const onSubmit = (data: ICardInformation & IDeliveryInformation) => {
-    console.log("Datos listo para proceso de pago:", data);
     dispatch(
       setCardInformation({
         cardNumber: data.cardNumber,
         expiryDate: data.expiryDate,
         cvv: data.cvv,
         cardHolder: data.cardHolder,
-      }),
+      })
     );
     dispatch(
       setDeliveryInformation({
@@ -74,7 +73,7 @@ export const CardDeliveryInfo = ({
         email: data.email,
         address: data.address,
         city: data.city,
-      }),
+      })
     );
     onFinished?.();
   };
