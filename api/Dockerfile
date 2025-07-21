@@ -1,59 +1,34 @@
-# Build stage
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
-WORKDIR /app
+# Crear la estructura de directorios necesaria
+RUN mkdir -p /app/api
+WORKDIR /app/api
 
-# Copy package files
+# Copiar archivos necesarios
 COPY package*.json ./
 COPY tsconfig*.json ./
 
-# Install dependencies
+# Instalar dependencias
 RUN npm ci
 
-# Copy source code
+# Copiar el resto de la aplicación
 COPY . .
 
-# Build the application
+# Construir la aplicación
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine
-
-WORKDIR /app
-
-# Install system dependencies
-RUN apk update && apk add --no-cache \
-    bash \
-    curl \
-    postgresql-client \
-    iputils \
-    net-tools \
-    && rm -rf /var/cache/apk/*
-
-# Copy package files
-COPY package*.json ./
-
-# Install production dependencies
+# Instalar solo dependencias de producción
 RUN npm ci --only=production
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/start.sh ./
+# Hacer ejecutable el script de inicio
+RUN chmod +x ./start.sh
 
-# Create necessary directories
-RUN mkdir -p dist/seeds
-
-# Environment variables
+# Variables de entorno
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Make start script executable
-RUN chmod +x ./start.sh
-
-# Expose the port the app runs on
+# Puerto expuesto
 EXPOSE 3000
 
-# Start the application
-# Start the application using the start script
-#
+# Comando de inicio
 CMD ["./start.sh"]

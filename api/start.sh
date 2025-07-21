@@ -52,4 +52,5 @@ else
 fi
 
 echo "[DEBUG] Starting application in production mode..."
-node dist/main
+# Usando la ruta absoluta que espera App Runner
+node /app/api/dist/main.js
