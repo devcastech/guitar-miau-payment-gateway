@@ -14,8 +14,7 @@ Aplicación web para la venta de guitarras con integración de pasarela de pago 
 - Catálogo de guitarras con vista detallada
 - Proceso de pago seguro con tarjeta de crédito
 - Integración con pasarela de pago externa
-- Gestión de inventario en tiempo real
-- Sistema de seguimiento de pedidos
+- Gestión de stock 
 - Webhooks para actualización de estados de pago
 
 ## 🔄 Flujo de Compra
