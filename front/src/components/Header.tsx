@@ -1,4 +1,4 @@
-import { Menu, X, Home, Info, Phone } from "lucide-react";
+import { Menu, X, Home, Info } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router";
 
