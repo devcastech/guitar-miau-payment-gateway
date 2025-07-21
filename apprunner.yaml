@@ -3,12 +3,13 @@ runtime: nodejs18
 build:
   commands:
     build:
+      - cd api
       - npm install
       - npm run build
   runtime_versions:
     nodejs: 18
 run:
-  command: node /app/api/dist/main
+  command: node dist/main
   network:
     port: 3000
   env_vars:
@@ -16,7 +17,6 @@ run:
       value: production
     - name: PORT
       value: '3000'
-    # Estas variables deberás configurarlas en la consola de AWS
     - name: DB_HOST
       value: ${DB_HOST}
     - name: DB_PORT
