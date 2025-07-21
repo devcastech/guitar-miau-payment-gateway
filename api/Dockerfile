@@ -1,34 +1,34 @@
 FROM node:18-alpine
 
-# Crear la estructura de directorios necesaria
+# Create directory structure expected by App Runner
 RUN mkdir -p /app/api
 WORKDIR /app/api
 
-# Copiar archivos necesarios
+# Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
 
-# Instalar dependencias
+# Install dependencies
 RUN npm ci
 
-# Copiar el resto de la aplicación
+# Copy source code
 COPY . .
 
-# Construir la aplicación
+# Build the application
 RUN npm run build
 
-# Instalar solo dependencias de producción
+# Install only production dependencies
 RUN npm ci --only=production
 
-# Hacer ejecutable el script de inicio
+# Make start script executable
 RUN chmod +x ./start.sh
 
-# Variables de entorno
+# Environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Puerto expuesto
+# Expose port
 EXPOSE 3000
 
-# Comando de inicio
+# Start command
 CMD ["./start.sh"]

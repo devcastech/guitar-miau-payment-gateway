@@ -38,14 +38,6 @@ export const Header = () => {
                   Guitarras
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  className="flex items-center gap-2 text-gray-700 hover:gray-800 font-medium transition-colors hover:underline duration-200"
-                  to="/about"
-                >
-                  About
-                </NavLink>
-              </li>
             </ul>
           </div>
 
@@ -84,14 +76,6 @@ export const Header = () => {
               >
                 <Info size={20} />
                 Guitarras
-              </NavLink>
-              <NavLink
-                to="/about"
-                onClick={closeMenu}
-                className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:text-slate-800 hover:bg-gray-50 font-medium transition-colors duration-200"
-              >
-                <Phone size={20} />
-                About
               </NavLink>
             </div>
           </div>
