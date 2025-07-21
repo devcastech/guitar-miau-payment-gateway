@@ -7,6 +7,7 @@ Aplicación web para la venta de guitarras con integración de pasarela de pago 
 - **FRONTEND**: [https://d1iw1r2yizv6bb.cloudfront.net/](https://d1iw1r2yizv6bb.cloudfront.net/)
 - **API**: [https://ppeqi4smpj.us-east-1.awsapprunner.com](https://ppeqi4smpj.us-east-1.awsapprunner.com)
 - **DOCUMENTACIÓN API**: [Swagger UI](https://ppeqi4smpj.us-east-1.awsapprunner.com/miau/docs#/)
+- **WEBHOOK EVENTOS**: [https://ppeqi4smpj.us-east-1.awsapprunner.com/webhook/payment-status](https://ppeqi4smpj.us-east-1.awsapprunner.com/webhook/payment-status)
 
 
 ## 🚀 Características
@@ -72,13 +73,15 @@ Aplicación web para la venta de guitarras con integración de pasarela de pago 
 
 ### Despliegue
 
-- **Frontend**: Despliegue automático a CloudFront mediante pipeline de CI/CD
-- **Backend**: Despliegue en ECS con contenedores Docker
+- **Frontend**: Despliegue en CloudFront 
+- **Backend**: Despliegue en ECS-AppRunner con contenedores Docker
 
 ## 🌐 Webhooks
 
 La aplicación recibe actualizaciones de la pasarela de pago a través de webhooks:
-- Actualización de estados de transacciones
+- Actualización de estados de transacciones usando Webhook de eventos: [https://ppeqi4smpj.us-east-1.awsapprunner.com/webhook/payment-status](https://ppeqi4smpj.us-east-1.awsapprunner.com/webhook/payment-status)
+
+
 
 ## ✅ Cobertura de Pruebas
 
