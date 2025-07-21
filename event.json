@@ -1,0 +1,76 @@
+{
+  "data": {
+    "transaction": {
+      "id": "15113-1753050715-38146",
+      "origin": null,
+      "status": "APPROVED",
+      "currency": "COP",
+      "reference": "REF_GM_1753050658303",
+      "created_at": "2025-07-20T22:32:00.002Z",
+      "billing_data": {
+        "legal_id": "9292992929",
+        "legal_id_type": "CC"
+      },
+      "finalized_at": "2025-07-20T22:32:03.114Z",
+      "redirect_url": "http://localhost:5173/product/6d16b4fa-39dd-491d-8197-282055dbe4e6",
+      "customer_data": {
+        "device_id": "92fd1668a297b46c02443aa677a4c77c",
+        "full_name": "Jimmy Page",
+        "browser_info": {
+          "browser_tz": "300",
+          "browser_language": "es-ES",
+          "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+          "browser_color_depth": "30",
+          "browser_screen_width": "1440",
+          "browser_screen_height": "900"
+        },
+        "phone_number": "+579929929292",
+        "device_data_token": "token_borrado_muy_largo"
+      },
+      "customer_email": "jimmypage@gmail.com",
+      "payment_method": {
+        "type": "CARD",
+        "extra": {
+          "bin": "424242",
+          "name": "VISA-4242",
+          "brand": "VISA",
+          "exp_year": "28",
+          "card_type": "CREDIT",
+          "exp_month": "03",
+          "last_four": "4242",
+          "card_holder": "Jimmy Page",
+          "is_three_ds": true,
+          "unique_code": "8482748a7e81f67e29569f18c9aa5fee315998be39bbc3717f62112ddbb77497",
+          "three_ds_auth": {
+            "current_step": "AUTHENTICATION",
+            "current_step_status": "COMPLETED"
+          },
+          "three_ds_auth_type": null,
+          "external_identifier": "hgHMFWX8Do",
+          "processor_response_code": "00"
+        },
+        "token": "tok_stagtest_5113_FA332602a177b9B213a82d7De6a80b93",
+        "installments": 1,
+        "is_click_to_pay": false
+      },
+      "status_message": null,
+      "amount_in_cents": 171000000,
+      "payment_link_id": null,
+      "shipping_address": null,
+      "payment_source_id": null,
+      "payment_method_type": "CARD"
+    }
+  },
+  "event": "transaction.updated",
+  "sent_at": "2025-07-20T22:32:03.390Z",
+  "signature": {
+    "checksum": "73bb4377eb865c17689aa3008097677184dfec355c5f1298799f2dc7e22608de",
+    "properties": [
+      "transaction.id",
+      "transaction.status",
+      "transaction.amount_in_cents"
+    ]
+  },
+  "timestamp": 1753050723,
+  "environment": "stagtest"
+}

@@ -6,7 +6,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('CustomersService', () => {
   let service: CustomersService;
-  let mockRepository: any;
+  let mockRepository: {
+    findOne: jest.Mock;
+    find: jest.Mock;
+    save: jest.Mock;
+    delete: jest.Mock;
+  };
 
   const createMockCustomer = (overrides: Partial<Customer> = {}): Customer => ({
     id: '550e8400-e29b-41d4-a716-446655440000',
@@ -14,6 +19,7 @@ describe('CustomersService', () => {
     email: 'robert.plant@example.com',
     phone: '9292929290',
     address: 'Calle 123 #45-67, Medellín, Colombia',
+    transactions: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -22,6 +28,9 @@ describe('CustomersService', () => {
   beforeEach(async () => {
     mockRepository = {
       findOne: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

@@ -5,6 +5,7 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
 import { Product } from '../products/entities/product.entity';
 import { Customer } from '../customers/entities/customer.entity';
+import { TransactionProduct } from './entities/transaction-product.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -15,27 +16,37 @@ export class TransactionsService {
     private productRepository: Repository<Product>,
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
+    @InjectRepository(TransactionProduct)
+    private transactionProductRepository: Repository<TransactionProduct>,
   ) {}
 
   async create(
     createTransactionDto: CreateTransactionDto,
   ): Promise<Transaction> {
     const {
-      products: productIds,
+      products: transactionProducts,
       customer: customerId,
       ...transactionData
     } = createTransactionDto;
 
-    // Buscar productos
+    const productIds = transactionProducts.map((item) => item.productId);
+
     const products = await this.productRepository.find({
       where: { id: In(productIds) },
     });
 
-    if (products.length !== productIds.length) {
-      throw new NotFoundException('Uno o más productos no fueron encontrados');
+    if (products.length !== new Set(productIds).size) {
+      const foundIds = products.map((p) => p.id);
+      const missingIds = productIds.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(
+        `Los siguientes productos no fueron encontrados: ${missingIds.join(', ')}`,
+      );
     }
 
-    // Buscar customer
+    const productMap = new Map(
+      products.map((product) => [product.id, product]),
+    );
+
     const customer = await this.customerRepository.findOne({
       where: { id: customerId },
     });
@@ -46,23 +57,48 @@ export class TransactionsService {
 
     const transaction = this.transactionRepository.create({
       ...transactionData,
-      products,
       customer,
     });
 
-    return this.transactionRepository.save(transaction);
+    const savedTransaction = await this.transactionRepository.save(transaction);
+
+    const transactionProductsToSave = transactionProducts.map((item) => {
+      const product = productMap.get(item.productId);
+      if (!product) {
+        throw new NotFoundException(
+          `Producto con ID ${item.productId} no encontrado`,
+        );
+      }
+      return this.transactionProductRepository.create({
+        transaction: savedTransaction,
+        product,
+        quantity: item.quantity,
+        priceAtTime: product.price,
+      });
+    });
+
+    await this.transactionProductRepository.save(transactionProductsToSave);
+    return savedTransaction;
   }
 
   async findAll(): Promise<Transaction[]> {
     return this.transactionRepository.find({
-      relations: ['products', 'customer'],
+      relations: [
+        'transactionProducts',
+        'transactionProducts.product',
+        'customer',
+      ],
     });
   }
 
   async findOne(id: string): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id },
-      relations: ['products', 'customer'],
+      relations: [
+        'transactionProducts',
+        'transactionProducts.product',
+        'customer',
+      ],
     });
 
     if (!transaction) {

@@ -4,7 +4,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity('customers')
 export class Customer {
@@ -37,4 +39,7 @@ export class Customer {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt: Date;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.customer)
+  transactions: Transaction[];
 }

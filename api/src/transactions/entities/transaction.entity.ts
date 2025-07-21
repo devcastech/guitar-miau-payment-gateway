@@ -1,16 +1,15 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
   UpdateDateColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
-import { Product } from '../../products/entities/product.entity';
 import { Customer } from '../../customers/entities/customer.entity';
+import { TransactionProduct } from './transaction-product.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('transactions')
@@ -26,6 +25,15 @@ export class Transaction {
     name: 'external_id',
   })
   externalId: string;
+
+  @ApiProperty({
+    description: 'Referencie the transaction',
+    example: 'REF_GM_1753050658303',
+  })
+  @Column({
+    nullable: true,
+  })
+  reference: string;
 
   @ApiProperty({
     description: 'Status of the transaction',
@@ -50,17 +58,18 @@ export class Transaction {
   customer: Customer;
 
   @ApiProperty({
-    description: 'Products of the transaction',
-    type: [Product],
-    isArray: true,
+    description: 'Productos de la transacción con sus cantidades',
+    type: [TransactionProduct],
   })
-  @ManyToMany(() => Product, { eager: true })
-  @JoinTable({
-    name: 'transaction_products',
-    joinColumn: { name: 'transaction_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'product_id', referencedColumnName: 'id' },
-  })
-  products: Product[];
+  @OneToMany(
+    () => TransactionProduct,
+    (transactionProduct) => transactionProduct.transaction,
+    {
+      cascade: true,
+      eager: true,
+    },
+  )
+  transactionProducts: TransactionProduct[];
 
   @CreateDateColumn({
     name: 'created_at',

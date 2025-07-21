@@ -6,12 +6,28 @@ import { Product } from '../products/entities/product.entity';
 import { Customer } from '../customers/entities/customer.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { TransactionProduct } from './entities/transaction-product.entity';
+import { In } from 'typeorm';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;
-  let mockTransactionRepository: any;
-  let mockProductRepository: any;
-  let mockCustomerRepository: any;
+  let mockTransactionRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+  };
+  let mockProductRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+  };
+  let mockCustomerRepository: {
+    findOne: jest.Mock;
+  };
+  let mockTransactionProductRepository: {
+    create: jest.Mock;
+    save: jest.Mock;
+  };
 
   const createMockProduct = (overrides: Partial<Product> = {}): Product => ({
     id: '123',
@@ -32,6 +48,7 @@ describe('TransactionsService', () => {
     email: 'test@example.com',
     phone: '1234567890',
     address: 'Test Address',
+    transactions: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -42,9 +59,10 @@ describe('TransactionsService', () => {
   ): Transaction => ({
     id: '456',
     externalId: 'ext-123',
+    reference: 'REF-123',
     status: 'pending',
     totalAmount: 1000,
-    products: [createMockProduct()],
+    transactionProducts: [],
     customer: createMockCustomer(),
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -68,6 +86,11 @@ describe('TransactionsService', () => {
       findOne: jest.fn(),
     };
 
+    mockTransactionProductRepository = {
+      create: jest.fn(),
+      save: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TransactionsService,
@@ -82,6 +105,10 @@ describe('TransactionsService', () => {
         {
           provide: getRepositoryToken(Customer),
           useValue: mockCustomerRepository,
+        },
+        {
+          provide: getRepositoryToken(TransactionProduct),
+          useValue: mockTransactionProductRepository,
         },
       ],
     }).compile();
@@ -100,16 +127,20 @@ describe('TransactionsService', () => {
   describe('create', () => {
     const createTransactionDto: CreateTransactionDto = {
       externalId: 'ext-123',
+      reference: 'REF-123',
       status: 'pending',
       totalAmount: 1000,
-      products: ['123', '456'],
+      products: [
+        { productId: '123', quantity: 1 },
+        { productId: '456', quantity: 2 },
+      ],
       customer: '550e8400-e29b-41d4-a716-446655440000',
     };
 
     it('should successfully create a transaction when valid data is provided', async () => {
       const mockProducts = [
-        createMockProduct({ id: '123' }),
-        createMockProduct({ id: '456' }),
+        createMockProduct({ id: '123', price: 500 }),
+        createMockProduct({ id: '456', price: 250 }),
       ];
       const mockCustomer = createMockCustomer();
       const mockTransaction = createMockTransaction();
@@ -119,38 +150,72 @@ describe('TransactionsService', () => {
       mockTransactionRepository.create.mockReturnValue(mockTransaction);
       mockTransactionRepository.save.mockResolvedValue(mockTransaction);
 
+      mockTransactionProductRepository.create.mockImplementation(
+        ({ product, quantity, priceAtTime }) => ({
+          product,
+          quantity,
+          priceAtTime,
+        }),
+      );
+      mockTransactionProductRepository.save.mockResolvedValue({});
+
       const result = await service.create(createTransactionDto);
 
-      expect(mockProductRepository.find).toHaveBeenCalled();
+      expect(mockProductRepository.find).toHaveBeenCalledWith({
+        where: { id: In(['123', '456']) },
+      });
+
       expect(mockCustomerRepository.findOne).toHaveBeenCalledWith({
         where: { id: '550e8400-e29b-41d4-a716-446655440000' },
       });
-      expect(mockTransactionRepository.create).toHaveBeenCalledWith({
-        externalId: 'ext-123',
-        status: 'pending',
-        totalAmount: 1000,
-        products: mockProducts,
-        customer: mockCustomer,
-      });
+
+      expect(mockTransactionRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          externalId: 'ext-123',
+          reference: 'REF-123',
+          status: 'pending',
+          totalAmount: 1000,
+          customer: mockCustomer,
+        }),
+      );
+
       expect(mockTransactionRepository.save).toHaveBeenCalledWith(
         mockTransaction,
       );
+
+      expect(mockTransactionProductRepository.create).toHaveBeenCalledTimes(2);
+      expect(mockTransactionProductRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          product: mockProducts[0],
+          quantity: 1,
+          priceAtTime: 500,
+        }),
+      );
+      expect(mockTransactionProductRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          product: mockProducts[1],
+          quantity: 2,
+          priceAtTime: 250,
+        }),
+      );
+
       expect(result).toEqual(mockTransaction);
+      expect(result.status).toEqual('pending');
     });
 
     it('should throw NotFoundException when one or more products are not found', async () => {
-      const mockProducts = [
-        createMockProduct({ id: 'this-product-id-no-exsits' }),
-      ];
+      mockProductRepository.find.mockResolvedValue([]);
       const mockCustomer = createMockCustomer();
-
-      mockProductRepository.find.mockResolvedValue(mockProducts);
       mockCustomerRepository.findOne.mockResolvedValue(mockCustomer);
 
       await expect(service.create(createTransactionDto)).rejects.toThrow(
-        new NotFoundException('Uno o más productos no fueron encontrados'),
+        new NotFoundException(
+          'Los siguientes productos no fueron encontrados: 123, 456',
+        ),
       );
-      expect(mockProductRepository.find).toHaveBeenCalled();
+      expect(mockProductRepository.find).toHaveBeenCalledWith({
+        where: { id: In(['123', '456']) },
+      });
       expect(mockTransactionRepository.create).not.toHaveBeenCalled();
     });
 
@@ -185,7 +250,11 @@ describe('TransactionsService', () => {
       const result = await service.findAll();
 
       expect(mockTransactionRepository.find).toHaveBeenCalledWith({
-        relations: ['products', 'customer'],
+        relations: [
+          'transactionProducts',
+          'transactionProducts.product',
+          'customer',
+        ],
       });
       expect(result).toEqual(mockTransactions);
     });
@@ -201,7 +270,11 @@ describe('TransactionsService', () => {
 
       expect(mockTransactionRepository.findOne).toHaveBeenCalledWith({
         where: { id },
-        relations: ['products', 'customer'],
+        relations: [
+          'transactionProducts',
+          'transactionProducts.product',
+          'customer',
+        ],
       });
       expect(result).toEqual(mockTransaction);
     });
@@ -215,7 +288,11 @@ describe('TransactionsService', () => {
       );
       expect(mockTransactionRepository.findOne).toHaveBeenCalledWith({
         where: { id },
-        relations: ['products', 'customer'],
+        relations: [
+          'transactionProducts',
+          'transactionProducts.product',
+          'customer',
+        ],
       });
     });
   });
@@ -237,7 +314,11 @@ describe('TransactionsService', () => {
 
       expect(mockTransactionRepository.findOne).toHaveBeenCalledWith({
         where: { id },
-        relations: ['products', 'customer'],
+        relations: [
+          'transactionProducts',
+          'transactionProducts.product',
+          'customer',
+        ],
       });
       expect(mockTransactionRepository.save).toHaveBeenCalledWith({
         ...mockTransaction,

@@ -1,10 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionStatusDto } from './dto/update-transaction-status.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Transaction } from './entities/transaction.entity';
 
+@ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
@@ -12,28 +27,55 @@ export class TransactionsController {
   @Post()
   @ApiOperation({
     summary: 'Create a new transaction',
+    description: 'Creates a new transaction with the provided details',
   })
   @ApiResponse({
-    status: 201,
-    description: 'The transaction has been successfully created.',
+    status: HttpStatus.CREATED,
+    description: 'The transaction has been successfully created',
     type: Transaction,
   })
-  create(@Body() createTransactionDto: CreateTransactionDto) {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Customer or product not found',
+  })
+  @ApiBody({ type: CreateTransactionDto })
+  async create(@Body() createTransactionDto: CreateTransactionDto) {
     return this.transactionsService.create(createTransactionDto);
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({ summary: 'Get all transactions' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Transaction] })
+  async findAll() {
     return this.transactionsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiOperation({ summary: 'Get transaction by ID' })
+  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: Transaction })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Transaction not found',
+  })
+  async findOne(@Param('id') id: string) {
     return this.transactionsService.findOne(id);
   }
 
   @Patch(':id/status')
-  updateStatus(
+  @ApiOperation({ summary: 'Update transaction status' })
+  @ApiParam({ name: 'id', description: 'Transaction ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: Transaction })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Transaction not found',
+  })
+  @ApiBody({ type: UpdateTransactionStatusDto })
+  async updateStatus(
     @Param('id') id: string,
     @Body() updateStatusDto: UpdateTransactionStatusDto,
   ) {

@@ -7,6 +7,7 @@ import { config } from './config/ormconfig';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CustomersModule } from './customers/customers.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DeliveriesModule } from './deliveries/deliveries.module';
     TransactionsModule,
     CustomersModule,
     DeliveriesModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [],
