@@ -52,5 +52,5 @@ else
 fi
 
 echo "[DEBUG] Starting application in production mode..."
-# Start the application from the built location (using absolute path expected by App Runner)
+# Start the application using absolute path
 node /app/api/dist/main
